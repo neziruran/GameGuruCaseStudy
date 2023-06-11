@@ -1,25 +1,28 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using Zenject;
 
-namespace _Project.Task_1.Runtime.Game
+namespace _Project.Task_1
 {
     public class Cell : MonoBehaviour
     {
-
+        // required match count defined as const because it wont change runtime
         const int RequiredMatch = 3;
         
         //variables 
         
         [SerializeField] private SpriteRenderer crossSpriteRenderer;
         [SerializeField] private int row, col;
-        [SerializeField] private bool isActive;
         
-        [SerializeField] private GridManager _gridManager;
-        [SerializeField] private UIManager _uiManager;
-        
+        private bool _isActive;
+        private GridManager _gridManager;
+        private UIManager _uiManager;
+        private List<Cell> _neighbors;
+
+
         //getters and setters
         public int Row
         {
@@ -32,7 +35,7 @@ namespace _Project.Task_1.Runtime.Game
             get => col;
             set => col = value;
         }
-        public bool IsActive => isActive;
+        public bool IsActive => _isActive;
 
         public GridManager GridManager
         {
@@ -46,28 +49,50 @@ namespace _Project.Task_1.Runtime.Game
 
         private void Start()
         {
-            ResetSpriteAlpha();
+            ResetSpriteAlpha(); // reset cross sprite from cells before game starts
         }
-
-
+        
+        /// <summary>
+        /// The process that the game is handled my mouse down event
+        /// </summary>
         private void OnMouseDown()
         {
-            OnCellClick();
+            SetCellState(); // updating cell state when players click it 
+            UpdateNeighbors(); // update neighbors when player click a cell in the grid
+            CheckMatch(); // lastly check if is there's any match on the grid
+        }
+
+        private void SetCellState()
+        {
+            if (_isActive) return;
+            SetCell(true); // activate cell
+            
+        }
+
+        private void UpdateNeighbors()
+        {
+            _neighbors = _gridManager.CheckNeighborhood(row,col); // update neighbors 
 
         }
 
-        private void OnCellClick()
+        private void CheckMatch()
         {
-            if (isActive) return;
-            SetCell(true);
-            var neighbors= _gridManager.CheckNeighborhood(row,col);
-            if (neighbors.Count < RequiredMatch) return;
-            foreach (var neighbor in neighbors)
+            if (HasMatched())
             {
-                //added a small delay to see all checkmarks
-                DOVirtual.DelayedCall(0.25f, () => neighbor.SetCell(false));
+                foreach (var neighbor in _neighbors)
+                {
+                    //added a small delay to see all checkmarks
+                    DOVirtual.DelayedCall(0.25f, () => neighbor.SetCell(false));
+                }
+
+                _uiManager.AddMatchCount();
             }
-            _uiManager.AddMatchCount();
+        }
+
+        private bool HasMatched()
+        {
+            _neighbors= _gridManager.CheckNeighborhood(row,col);  
+            return _neighbors.Count >= RequiredMatch;
         }
         
         private void ResetSpriteAlpha()
@@ -90,9 +115,9 @@ namespace _Project.Task_1.Runtime.Game
         }
         private void SetCell(bool active)
         {
-            isActive = active;
+            _isActive = active;
            
-            StartCoroutine(!isActive
+            StartCoroutine(!_isActive
                 ? SpriteFade(crossSpriteRenderer, 0, .25f)
                 : SpriteFade(crossSpriteRenderer, 1, .25f));
         }

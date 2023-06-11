@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace _Project.Task_1.Runtime.Game
+namespace _Project.Task_1
 {
     public class CameraManager : MonoBehaviour
     {
@@ -11,6 +11,7 @@ namespace _Project.Task_1.Runtime.Game
             mainCamera = Camera.main;
         }
 
+        //set camera size
         public void SetOrthographicSize(float size)
         {
             var currentRatio = (float)Screen.width / Screen.height;

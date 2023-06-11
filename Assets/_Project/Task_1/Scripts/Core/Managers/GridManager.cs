@@ -4,28 +4,33 @@ using System.Linq;
 using UnityEngine;
 using Zenject;
 
-namespace _Project.Task_1.Runtime.Game
+namespace _Project.Task_1
 {
     public class GridManager : MonoBehaviour
     {
-        
-      
-        [SerializeField] private GameObject cellPrefab;
-        [SerializeField] private int gridSize;
-        [SerializeField] private CameraManager cameraManager;
-        [SerializeField] private UIManager _uiManager;
-        private List<GameObject> _objectPool;
-        private Cell[,] _cells;
-        
+        // accessors
         public int GridSize
         {
             set => gridSize = value;
         }
+      
+        
+        //private fields
+        [SerializeField] private GameObject cellPrefab;
+        [SerializeField] private int gridSize;
+        
+        
+        //private accessors
+        private CameraManager _cameraManager;
+        private UIManager _uiManager;
+        private List<GameObject> _objectPool;
+        private Cell[,] _cells;
+   
         
         [Inject]
         private void OnInstaller(CameraManager cameraManager,UIManager uiManager)
         {
-            this.cameraManager = cameraManager;
+            _cameraManager = cameraManager;
             _uiManager = uiManager;
         }
 
@@ -36,8 +41,11 @@ namespace _Project.Task_1.Runtime.Game
 
         public void GenerateGrid()
         {
-            cameraManager.SetOrthographicSize(gridSize);
+            _cameraManager.SetOrthographicSize(gridSize); // set camera size according to grid
+            
             DisablePoolObjects();
+            
+            // initialize cell array
             _cells = new Cell[gridSize, gridSize];
             
             //Set controller pivot 
@@ -46,6 +54,7 @@ namespace _Project.Task_1.Runtime.Game
             {
                 for (var j = 0; j < gridSize; j++)
                 {
+                    // check if there's existing object in the pool
                     var cellObject = _objectPool.FirstOrDefault(x => !x.activeSelf);
                     if (cellObject != null)
                     {
@@ -54,11 +63,14 @@ namespace _Project.Task_1.Runtime.Game
                     }
                     else
                     {
+                        // if cell object does not created yet, do it and ad it to pool
                         Vector3 spawnPosition = new Vector3(i - offset, j - offset);
                         cellObject = Instantiate(cellPrefab,spawnPosition , Quaternion.identity, transform);
                         _objectPool.Add(cellObject);
                     }
 
+                    
+                    // place cell object into grid
                     var gridElement = cellObject.GetComponent<Cell>();
                     gridElement.GridManager = this;
                     gridElement.UIManager = _uiManager;
@@ -69,6 +81,8 @@ namespace _Project.Task_1.Runtime.Game
             }
         }
 
+        
+        // remove pool object when game init
         private void DisablePoolObjects()
         {
             _objectPool ??= new List<GameObject>();

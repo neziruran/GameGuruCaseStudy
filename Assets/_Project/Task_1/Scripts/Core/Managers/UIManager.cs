@@ -1,11 +1,10 @@
 ﻿using System;
-using Project.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-namespace _Project.Task_1.Runtime.Game
+namespace _Project.Task_1
 {
     public class UIManager : MonoBehaviour
     {
@@ -25,6 +24,8 @@ namespace _Project.Task_1.Runtime.Game
 
         private void Start()
         {
+            
+            // initialize button
             buttonGenerateGrid.onClick.AddListener(() => {
                 _gridManager.GridSize = Convert.ToInt32(inputGridSize.text);
                 _gridManager.GenerateGrid();
@@ -32,6 +33,8 @@ namespace _Project.Task_1.Runtime.Game
                 matchCountText.text = _matchCount.ToString();
             });
         }
+        
+        // update match when a match found
         public void AddMatchCount()
         {
             _matchCount++;
