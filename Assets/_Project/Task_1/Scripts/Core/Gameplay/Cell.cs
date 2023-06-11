@@ -5,7 +5,7 @@ using DG.Tweening;
 using UnityEngine;
 using Zenject;
 
-namespace _Project.Task_1
+namespace Project.Task_1
 {
     public class Cell : MonoBehaviour
     {
