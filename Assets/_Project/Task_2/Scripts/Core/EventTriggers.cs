@@ -26,10 +26,7 @@ namespace _Project.Task2.Managers
 
         public UnityAction<GameObject> OnGetLastBlockPosition;
         public UnityAction OnGetFirstBlock;
-
-
-        public UnityAction<int> OnTextSpawn;
-
+        
         public UnityAction<GameObject, float, int> OnProgressBarSet;
 
     }

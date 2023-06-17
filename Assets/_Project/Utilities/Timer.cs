@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace Project.Utilities
+namespace _Project.Utilities
 {
     public class Timer : MonoBehaviour
     {
