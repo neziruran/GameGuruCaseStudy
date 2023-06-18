@@ -2,12 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace _Project.Utilities
 {
     public static class ExtensionMethods
     {
+        public static void LoadSceneExtended(Button button,int scene)
+        {
+            button.onClick.AddListener(()=>SceneManager.LoadScene(scene));
+        }
         public static void SafeInvoke(this Action source)
         {
             if (source != null) source.Invoke();
@@ -125,6 +131,8 @@ namespace _Project.Utilities
 
                 return result;
             }
+            
+            
         }
     }
 }
